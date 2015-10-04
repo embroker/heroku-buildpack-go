@@ -224,6 +224,8 @@ else
     go get "${FLAGS[@]}" $pkgs
 fi
 
+cd $build
+ls
 rm -rf $build/.heroku
 
 mkdir -p $build/.profile.d
