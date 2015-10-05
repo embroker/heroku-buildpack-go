@@ -244,8 +244,8 @@ godep go generate
 godep go build
 step "Running tests: godep go test ./..."
 rm $build/tools/dmgen/dmgen_test.go
+cd $build
 godep go test ./...
-godep go test $build/server/api
 rm -rf $build/.heroku
 
 mkdir -p $build/.profile.d
