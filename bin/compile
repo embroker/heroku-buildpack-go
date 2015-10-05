@@ -224,8 +224,11 @@ else
     go get "${FLAGS[@]}" $pkgs
 fi
 step "Clearing generated files"
+ls $build/server/dm/associations/*.go
 rm $build/server/dm/associations/*.go
+ls $build/server/dm/entities/*.go
 rm $build/server/dm/entities/*.go
+ls $build/server/dm/enums/*.go
 rm $build/server/dm/enums/*.go
 
 step "Running build on tools"
@@ -241,6 +244,10 @@ step "Running build: godep go build"
 step "Running tests: godep go test ./..."
 godep go test ./...
 rm -rf $build/.heroku
+step "Generated files after build"
+ls $build/server/dm/associations/*.go
+ls $build/server/dm/entities/*.go
+ls $build/server/dm/enums/*.go
 
 mkdir -p $build/.profile.d
 echo 'PATH=$PATH:$HOME/bin' > $build/.profile.d/go.sh
