@@ -224,7 +224,7 @@ else
     go get "${FLAGS[@]}" $pkgs
 fi
 
-cd $build/server/api
+#cd $build/server/api
 go test
 rm -rf $build/.heroku
 
