@@ -232,6 +232,8 @@ ls $build/server/dm/associations
 ls $build/server/dm/entities
 ls $build/server/dm/enums
 
+export
+
 step "Running build on tools"
 cd $build/tools/apigen
 godep go build
