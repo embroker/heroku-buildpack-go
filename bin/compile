@@ -224,10 +224,18 @@ else
     go get "${FLAGS[@]}" $pkgs
 fi
 cd $build
-step "Running build: godep go build"
+step "Running build on tools"
+cd tools/api
 godep go build
-step "Running tests: godep go test"
-godep go test
+godep go install
+cd ../dm
+godep go build
+godep go install
+step "Running build: godep go build"
+godep go generate
+godep go build
+step "Running tests: godep go test ./..."
+godep go test ./...
 rm -rf $build/.heroku
 
 mkdir -p $build/.profile.d
