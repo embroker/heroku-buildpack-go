@@ -228,9 +228,9 @@ rm $build/server/dm/associations/*.go
 rm $build/server/dm/entities/*.go
 rm $build/server/dm/enums/*.go
 echo "Contents of generated files dirs:"
-ls $build/server/dm/associations/*.go
-ls $build/server/dm/entities/*.go
-ls $build/server/dm/enums/*.go
+ls $build/server/dm/associations
+ls $build/server/dm/entities
+ls $build/server/dm/enums
 
 step "Running build on tools"
 cd $build/tools/apigen
