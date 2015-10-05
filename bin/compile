@@ -225,10 +225,10 @@ else
 fi
 cd $build
 step "Running build on tools"
-cd tools/api
+cd $build/tools/api
 godep go build
 godep go install
-cd ../dm
+cd $build/tools/dm
 godep go build
 godep go install
 step "Running build: godep go build"
