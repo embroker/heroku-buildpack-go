@@ -223,7 +223,11 @@ else
     step "Running: go get ${FLAGS[@]} $pkgs"
     go get "${FLAGS[@]}" $pkgs
 fi
-cd $build
+step "Clearing generated files"
+rm $build/server/dm/associations/*.go
+rm $build/server/dm/entities/*.go
+rm $build/server/dm/enums/*.go
+
 step "Running build on tools"
 cd $build/tools/apigen
 godep go build
@@ -235,7 +239,7 @@ step "Running build: godep go build"
 godep go generate
 godep go build
 step "Running tests: godep go test ./..."
-godep go test ./...
+#godep go test ./...
 rm -rf $build/.heroku
 
 mkdir -p $build/.profile.d
