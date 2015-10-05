@@ -243,7 +243,6 @@ step "Running build: godep go build"
 #godep go generate
 #godep go build
 step "Running tests: godep go test ./..."
-rm $build/tools/apigen/*_test.go
 rm $build/tools/dmgen/dmgen_test.go
 godep go test ./...
 rm -rf $build/.heroku
