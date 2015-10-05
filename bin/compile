@@ -230,16 +230,16 @@ rm $build/server/dm/enums/*.go
 
 step "Running build on tools"
 cd $build/tools/apigen
-godep go build
-godep go install
+#godep go build
+#godep go install
 cd $build/tools/dmgen
-godep go build
-godep go install
+#godep go build
+#godep go install
 step "Running build: godep go build"
-godep go generate
-godep go build
+#godep go generate
+#godep go build
 step "Running tests: godep go test ./..."
-#godep go test ./...
+godep go test ./...
 rm -rf $build/.heroku
 
 mkdir -p $build/.profile.d
