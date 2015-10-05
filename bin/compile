@@ -223,7 +223,11 @@ else
     step "Running: go get ${FLAGS[@]} $pkgs"
     go get "${FLAGS[@]}" $pkgs
 fi
-
+cd $build
+step "Running build: go build"
+go build
+step "Running tests: go test"
+go test
 rm -rf $build/.heroku
 
 mkdir -p $build/.profile.d
