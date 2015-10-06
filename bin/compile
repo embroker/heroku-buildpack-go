@@ -49,8 +49,9 @@ export_env_dir() {
 }
 
 export_env_dir
-step "export:"
+echo "export:"
 export
+
 mkdir -p "$1" "$2"
 build=$(cd "$1/" && pwd)
 cache=$(cd "$2/" && pwd)
