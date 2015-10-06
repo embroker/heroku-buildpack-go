@@ -250,6 +250,8 @@ ls $build/server/dm/enums
 
 export
 
+echo "RECEIVE_DATA:"
+echo $RECEIVE_DATA
 
 echo $RECEIVE_DATA > $build/receive_data.json
 
