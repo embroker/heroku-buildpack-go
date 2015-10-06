@@ -35,22 +35,6 @@ urlfor() {
     esac
 }
 
-export_env_dir() {
- echo $3
- env_dir=$3
- whitelist_regex=${2:-''}
- blacklist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$'}
- if [ -d "$env_dir" ]; then
-   for e in $(ls $env_dir); do
-     echo "$e" | grep -E "$whitelist_regex" | grep -qvE "$blacklist_regex" &&
-     export "$e=$(cat $env_dir/$e)"
-     :
-   done
- fi
-}
-
-export_env_dir
-
 mkdir -p "$1" "$2"
 build=$(cd "$1/" && pwd)
 cache=$(cd "$2/" && pwd)
@@ -238,14 +222,11 @@ else
     step "Running: go get ${FLAGS[@]} $pkgs"
     go get "${FLAGS[@]}" $pkgs
 fi
+
 step "Clearing generated files"
 rm $build/server/dm/associations/*.go
 rm $build/server/dm/entities/*.go
 rm $build/server/dm/enums/*.go
-echo "Contents of generated files dirs:"
-ls $build/server/dm/associations
-ls $build/server/dm/entities
-ls $build/server/dm/enums
 
 step "Running build on tools"
 cd $build/tools/apigen
@@ -261,6 +242,7 @@ step "Running tests: godep go test ./..."
 rm $build/tools/dmgen/dmgen_test.go
 cd $build
 godep go test ./...
+
 rm -rf $build/.heroku
 
 mkdir -p $build/.profile.d
