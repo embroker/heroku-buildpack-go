@@ -49,8 +49,6 @@ export_env_dir() {
 }
 
 export_env_dir
-echo "export:"
-export
 
 mkdir -p "$1" "$2"
 build=$(cd "$1/" && pwd)
@@ -247,11 +245,6 @@ echo "Contents of generated files dirs:"
 ls $build/server/dm/associations
 ls $build/server/dm/entities
 ls $build/server/dm/enums
-
-export
-
-
-echo $RECEIVE_DATA > $build/receive_data.json
 
 step "Running build on tools"
 cd $build/tools/apigen
