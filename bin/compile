@@ -208,40 +208,17 @@ fi
 
 unset GIT_DIR # unset git dir or it will mess with goinstall
 cd $p
-if test -e $build/Godeps
-then
-    if test "$GO15VENDOREXPERIMENT" = "1"
-    then
-      step "Running: go install -v ${FLAGS[@]} $pkgs"
-      go install -v "${FLAGS[@]}" $pkgs
-    else
-      step "Running: godep go install ${FLAGS[@]} $pkgs"
-      godep go install "${FLAGS[@]}" $pkgs
-    fi
-else
-    step "Running: go get ${FLAGS[@]} $pkgs"
-    go get "${FLAGS[@]}" $pkgs
-fi
 
-step "Clearing generated files"
-rm $build/server/dm/associations/*.go
-rm $build/server/dm/entities/*.go
-rm $build/server/dm/enums/*.go
-
-step "Running build on tools"
-cd $build/tools/apigen
-godep go build
+cd tools/apigen
 godep go install
-cd $build/tools/dmgen
-godep go build
+cd -
+cd tools/dmgen
 godep go install
-step "Running build: godep go build"
-godep go generate
-godep go build
-step "Running tests: godep go test ./..."
-rm $build/tools/dmgen/dmgen_test.go
-cd $build
-godep go test ./...
+cd -
+godep restore
+rm -rf server/dm/entities server/dm/associations
+go generate
+go install
 
 rm -rf $build/.heroku
 
