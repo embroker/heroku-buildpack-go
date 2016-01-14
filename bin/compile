@@ -209,19 +209,14 @@ fi
 unset GIT_DIR # unset git dir or it will mess with goinstall
 cd $p
 
-
 export PATH=$GOBIN:$PATH
-
 cd tools/apigen
 godep go install
-echo ls \$GOBIN
-ls $GOBIN
 cd -
 cd tools/dmgen
 godep go install
 cd -
 godep restore
-rm -rf server/dm/entities server/dm/associations
 go generate
 go install
 
