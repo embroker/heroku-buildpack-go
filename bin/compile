@@ -209,20 +209,21 @@ fi
 unset GIT_DIR # unset git dir or it will mess with goinstall
 cd $p
 
-echo \$PATH: $PATH
-echo \$GOPATH: $GOPATH
+
+export PATH=$GOBIN:$PATH
+
 cd tools/apigen
-godep go install "${FLAGS[@]}" $pkgs
-echo ls \$pkgs
-ls $pkgs
+godep go install
+echo ls \$GOBIN
+ls $GOBIN
 cd -
 cd tools/dmgen
-godep go install "${FLAGS[@]}" $pkgs
+godep go install
 cd -
 godep restore
 rm -rf server/dm/entities server/dm/associations
 go generate
-go install "${FLAGS[@]}" $pkgs
+go install
 
 rm -rf $build/.heroku
 
