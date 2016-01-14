@@ -210,8 +210,11 @@ unset GIT_DIR # unset git dir or it will mess with goinstall
 cd $p
 
 export PATH=$PATH:$GOPATH/bin
+echo $PATH
+echo $GOPATH
 cd tools/apigen
 godep go install
+ls $GOPATH
 cd -
 cd tools/dmgen
 godep go install
