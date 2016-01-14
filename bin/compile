@@ -209,6 +209,7 @@ fi
 unset GIT_DIR # unset git dir or it will mess with goinstall
 cd $p
 
+# build server
 export PATH=$GOBIN:$PATH
 cd tools/apigen
 godep go install
@@ -219,6 +220,19 @@ cd -
 godep restore
 go generate
 go install
+
+# build client
+cd client/app
+npm install
+grunt allow
+cd -
+cd client/admin
+npm install
+grunt allow
+cd -cd client/public
+npm install
+grunt allow
+cd -
 
 rm -rf $build/.heroku
 
