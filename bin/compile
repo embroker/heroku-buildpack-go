@@ -126,18 +126,7 @@ npm install grunt-cli --save-dev -g
 
 cd $build
 # build client
-cd client/app
-npm install
-grunt heroku
-cd -
-cd client/admin
-npm install
-grunt heroku
-cd -
-cd client/public
-npm install
-grunt heroku
-cd -
+./buildclient
 
 p=$GOPATH/src/$name
 mkdir -p $p
@@ -146,7 +135,7 @@ cd $p
 
 # build server
 export PATH=$GOBIN:$PATH
-source ./build.sh
+source ./buildserver.sh
 
 rm -rf $build/.heroku
 
