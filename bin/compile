@@ -236,7 +236,8 @@ cd -
 cd client/admin
 npm install
 grunt all
-cd -cd client/public
+cd -
+cd client/public
 npm install
 grunt all
 cd -
