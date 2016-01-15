@@ -226,6 +226,7 @@ export PATH="$build/.heroku/node/bin":$PATH
 source $buildpack/lib/environment.sh
 source $buildpack/lib/binaries.sh
 install_nodejs "$build/.heroku/node"
+npm install grunt-cli --save-dev -g
 
 # build client
 cd client/app
