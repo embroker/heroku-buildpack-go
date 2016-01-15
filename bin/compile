@@ -47,6 +47,12 @@ then arch=amd64
 fi
 plat=$(uname|tr A-Z a-z)-$arch
 
+# Python
+venv=$cache/venv
+mkdir -p $cache/pip
+PATH=$buildpack/$plat/bin:$venv/bin:$PATH
+steptxt="----->"
+
 source $buildpack/lib/environment.sh
 source $buildpack/lib/binaries.sh
 
