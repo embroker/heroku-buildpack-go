@@ -45,6 +45,9 @@ then arch=amd64
 fi
 plat=$(uname|tr A-Z a-z)-$arch
 
+source $buildpack/lib/environment.sh
+source $buildpack/lib/binaries.sh
+
 # Python
 venv=$cache/venv
 mkdir -p $cache/pip
@@ -210,13 +213,11 @@ unset GIT_DIR # unset git dir or it will mess with goinstall
 cd $p
 
 # build server
-./build
+source ./build.sh
 
 # install node.js and grunt
 mkdir -p "$build/.heroku/node/"
 export PATH="$build/.heroku/node/bin":$PATH
-source $buildpack/lib/environment.sh
-source $buildpack/lib/binaries.sh
 install_nodejs "$build/.heroku/node"
 npm install grunt-cli --save-dev -g
 
