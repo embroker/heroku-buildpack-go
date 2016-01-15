@@ -223,7 +223,7 @@ go install
 
 mkdir -p "$build/.heroku/node/"
 export PATH="$build/.heroku/node/bin":$PATH
-source $buildpack/lib/environment.sh"
+source $buildpack/lib/environment.sh
 source $buildpack/lib/binaries.sh
 install_nodejs "$build/.heroku/node"
 
