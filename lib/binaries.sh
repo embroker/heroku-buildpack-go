@@ -8,7 +8,7 @@ needs_resolution() {
 }
 
 install_nodejs() {
-  local version="0.10.25"
+  local version="0.10.x"
   local dir="$1"
 
   if needs_resolution "$version"; then
