@@ -221,13 +221,10 @@ godep restore
 go generate
 go install
 
-echo "Downloading and installing node ..."
-local download_url="http://s3pository.heroku.com/node/v0.10.25/node-v0.10.25-$os-$cpu.tar.gz"
-curl "$download_url" --silent --fail  --retry 5 --retry-max-time 15 -o /tmp/node.tar.gz || (echo "Unable to download node $version; does it exist?" && false)
-tar xzf /tmp/node.tar.gz -C /tmp
-rm -rf $dir/*
-mv /tmp/node-v0.10.25-$os-$cpu/* $dir
-chmod +x $dir/bin/*
+mkdir -p "$build/.heroku/node/"
+export PATH="$build/.heroku/node/bin":$PATH
+source $buildpack/lib/binaries.sh
+install_nodejs "$build/.heroku/node"
 
 # build client
 cd client/app
