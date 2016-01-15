@@ -213,6 +213,7 @@ unset GIT_DIR # unset git dir or it will mess with goinstall
 cd $p
 
 # build server
+export PATH=$GOBIN:$PATH
 source ./build.sh
 
 # install node.js and grunt
