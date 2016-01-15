@@ -230,14 +230,14 @@ install_nodejs "$build/.heroku/node"
 # build client
 cd client/app
 npm install
-grunt allow
+grunt all
 cd -
 cd client/admin
 npm install
-grunt allow
+grunt all
 cd -cd client/public
 npm install
-grunt allow
+grunt all
 cd -
 
 rm -rf $build/.heroku
