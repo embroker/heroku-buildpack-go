@@ -210,17 +210,9 @@ unset GIT_DIR # unset git dir or it will mess with goinstall
 cd $p
 
 # build server
-export PATH=$GOBIN:$PATH
-cd tools/apigen
-godep go install
-cd -
-cd tools/dmgen
-godep go install
-cd -
-godep restore
-go generate
-go install
+./build
 
+# install node.js and grunt
 mkdir -p "$build/.heroku/node/"
 export PATH="$build/.heroku/node/bin":$PATH
 source $buildpack/lib/environment.sh
@@ -231,15 +223,15 @@ npm install grunt-cli --save-dev -g
 # build client
 cd client/app
 npm install
-grunt all
+grunt heroku
 cd -
 cd client/admin
 npm install
-grunt all
+grunt heroku
 cd -
 cd client/public
 npm install
-grunt all
+grunt heroku
 cd -
 
 rm -rf $build/.heroku
