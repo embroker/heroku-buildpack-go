@@ -130,7 +130,7 @@ source ./buildserver.sh
 
 # install node.js and grunt
 node_engine=$(read_json "$build/client/heroku.json" ".node")
-echo "engines.node (package.json):  ${node_engine:-unspecified}"
+echo ".node (heroku.json):  ${node_engine:-unspecified}"
 mkdir -p "$build/.heroku/node/"
 install_nodejs "$node_engine" "$build/.heroku/node"
 export PATH="$build/.heroku/node/bin":$PATH
