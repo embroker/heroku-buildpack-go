@@ -8,8 +8,8 @@ needs_resolution() {
 }
 
 install_nodejs() {
-  local version="0.10.x"
-  local dir="$1"
+  local version=$1
+  local dir="$2"
 
   if needs_resolution "$version"; then
     echo "Resolving node version ${version:-(latest stable)} via semver.io..."

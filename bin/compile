@@ -55,6 +55,7 @@ steptxt="----->"
 
 source $buildpack/lib/environment.sh
 source $buildpack/lib/binaries.sh
+source $buildpack/lib/json.sh
 
 warn() {
     echo >&2 " !     $@"
@@ -97,6 +98,7 @@ then
     exit 1
 fi
 
+# install Go or get it from cache
 if test -d $cache/$ver/go
 then
     step "Using $ver"
@@ -127,9 +129,11 @@ cd $p
 source ./buildserver.sh
 
 # install node.js and grunt
+node_engine=$(read_json "$build/client/heroku.json" ".node")
+echo "engines.node (package.json):  ${node_engine:-unspecified}"
 mkdir -p "$build/.heroku/node/"
+install_nodejs "$node_engine" "$build/.heroku/node"
 export PATH="$build/.heroku/node/bin":$PATH
-install_nodejs "$build/.heroku/node"
 npm install grunt-cli --save-dev -g
 
 cd $build
