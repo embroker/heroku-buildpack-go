@@ -106,7 +106,7 @@ cd $p
 # build server
 # source ./buildserver.sh
 
-$PKGS=$(<$BUILD_DIR /Godeps/Godeps.json $JQ -r 'if .Packages then .Packages | join(" ") else "." end')
+$PKGS=$(<$BUILD_DIR/Godeps/Godeps.json $JQ -r 'if .Packages then .Packages | join(" ") else "." end')
 
 cd tools/apigen
 go install $PKGS
