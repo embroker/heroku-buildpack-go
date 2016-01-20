@@ -1,4 +1,6 @@
-export JQ="$buildpack/vendor/jq-$os"
+export JQ="$BP_DIR/vendor/jq-$OS"
+
+echo JQ $JQ
 
 read_json() {
   local file=$1

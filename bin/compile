@@ -38,9 +38,12 @@ urlfor() {
 }
 
 mkdir -p "$1" "$2"
-BUILD_DIR_DIR=$(cd "$1/" && pwd)
+BUILD_DIR=$(cd "$1/" && pwd)
+echo BUILD_DIR $BUILD_DIR
 CACHE_DIR=$(cd "$2/" && pwd)
+echo CACHE_DIR $CACHE_DIR
 BP_DIR=$(cd "$(dirname $0)/.." && pwd)
+echo BP_DIR $BP_DIR
 
 source $BP_DIR/lib/environment.sh
 source $BP_DIR/lib/binaries.sh
@@ -81,7 +84,7 @@ else
     start "Installing $GO_VERSION"
 		GO_TAR="go.tar.gz"
 		echo GO_URL $GO_URL
-		curl -sO $GO_URL -0 $GO_TAR
+		curl $GO_URL --silent --fail --retry 5 --retry-max-time 15  -o $GO_TAR || (echo "Unable to download node $GO_VERSION; does it exist?" && false)
 		tar zxf $GO_TAR
 		rm -f $GO_TAR
 		mv go $GO_VERSION
@@ -127,7 +130,7 @@ else
 		NODE_TAR="node.tar.gz"
 		curl $NODE_URL --silent --fail --retry 5 --retry-max-time 15 -o $NODE_TAR || (echo "Unable to download node $NODE_VERSION; does it exist?" && false)
 		tar xzf $NODE_TAR
-		mv node-v$NODE_VERSION-$OS-$CPU/* $NODE_VERSION
+		mv node-v$NODE_VERSION-$OS-$CPU $NODE_VERSION
     finished
 	chmod +x $NODE_DIR/bin/*
 	npm install grunt-cli --save-dev -g
