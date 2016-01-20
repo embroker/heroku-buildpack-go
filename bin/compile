@@ -41,58 +41,25 @@ mkdir -p "$1" "$2"
 BUILD_DIR_DIR=$(cd "$1/" && pwd)
 CACHE_DIR=$(cd "$2/" && pwd)
 BP_DIR=$(cd "$(dirname $0)/.." && pwd)
-ARCH=$(uname -m|tr A-Z a-z)
-if test $ARCH = x86_64
-then ARCH=amd64
-fi
-PLAT=$(uname|tr A-Z a-z)-$ARCH
-
-# Python
-venv=$CACHE_DIR/venv
-mkdir -p $CACHE_DIR/pip
-PATH=$BP_DIR/$PLAT/bin:$venv/bin:$PATH
-steptxt="----->"
 
 source $BP_DIR/lib/environment.sh
 source $BP_DIR/lib/binaries.sh
 source $BP_DIR/lib/json.sh
 
-warn() {
-    echo >&2 " !     $@"
-}
-
 step() {
-    echo "$steptxt $@"
+    echo "-----> $@"
 }
 
 start() {
-    echo -n "$steptxt $@... "
+    echo -n "-----> $@... "
 }
 
 finished() {
     echo "done"
 }
 
-if test -f $BUILD_DIR/Godeps/Godeps.json
-then
-    step "Checking Godeps/Godeps.json file."
-    if ! jq -r . < $BUILD_DIR/Godeps/Godeps.json > /dev/null
-    then
-        warn "Bad Godeps/Godeps.json file"
-        exit 1
-    fi
-    name=$(<$BUILD_DIR/Godeps/Godeps.json jq -r .ImportPath)
-    GO_VERSION=$(<$BUILD_DIR/Godeps/Godeps.json jq -r .GoVersion)
-else
-    warn "Godeps/Godeps.json not found
-    exit 1
-fi
-
-if test -e $BUILD_DIR/bin && ! test -d $BUILD_DIR/bin
-then
-    warn "File bin exists and is not a directory."
-    exit 1
-fi
+GO_PROJECT_NAME=$(read_json "$BUILD_DIR/Godeps/Godeps.json" ".ImportPath")
+GO_VERSION=$(read_json "$BUILD_DIR/Godeps/Godeps.json" ".GoVersion")
 
 GO_FILE=${GOFILE:-$GO_VERSION.$(uname|tr A-Z a-z)-amd64$(platext $GO_VERSION).tar.gz}
 GO_URL=${GOURL:-$(urlfor $GO_VERSION $GO_FILE)}
@@ -122,7 +89,7 @@ export GOROOT=$GO_DIR
 export GOPATH=$BUILD_DIR/.heroku/go
 export PATH=$GOROOT/bin:$GOBIN:$PATH
 
-p=$GOPATH/src/$name
+p=$GOPATH/src/$GO_PROJECT_NAME
 mkdir -p $p
 cp -R $BUILD_DIR/* $p
 cd $p
