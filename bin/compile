@@ -63,6 +63,11 @@ finished() {
     echo "done"
 }
 
+if ! [ -z ${BP_CLEAR_CACHE+x} ]; then
+	step "Clearing cache"
+	rm -rf $CACHE_DIR/*
+fi
+
 GO_PROJECT_NAME=$(read_json "$BUILD_DIR/Godeps/Godeps.json" ".ImportPath")
 echo GO_PROJECT_NAME $GO_PROJECT_NAME
 GO_VERSION=$(read_json "$BUILD_DIR/Godeps/Godeps.json" ".GoVersion")
@@ -122,6 +127,7 @@ NODE_URL="http://s3pository.heroku.com/node/v$NODE_VERSION/node-v$NODE_VERSION-$
 # install Node or get it from cache
 NODE_CACHE_DIR=$CACHE_DIR/node/
 NODE_DIR=$NODE_CACHE_DIR/$NODE_VERSION/
+export PATH="$NODE_DIR/bin":$PATH
 if test -d $NODE_CACHE_DIR
 then
     step "Using $NODE_VERSION from cache"
@@ -139,8 +145,6 @@ else
 	chmod +x $NODE_DIR/bin/*
 	npm install grunt-cli --save-dev -g
 fi
-
-export PATH="$NODE_DIR/bin":$PATH
 
 cd $BUILD_DIR
 # build client
