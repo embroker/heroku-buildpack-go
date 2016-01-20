@@ -60,9 +60,12 @@ finished() {
 
 GO_PROJECT_NAME=$(read_json "$BUILD_DIR/Godeps/Godeps.json" ".ImportPath")
 GO_VERSION=$(read_json "$BUILD_DIR/Godeps/Godeps.json" ".GoVersion")
+echo GO_VERSION $GO_VERSION
 
 GO_FILE=${GOFILE:-$GO_VERSION.$(uname|tr A-Z a-z)-amd64$(platext $GO_VERSION).tar.gz}
+echo GO_FILE $GO_FILE
 GO_URL=${GOURL:-$(urlfor $GO_VERSION $GO_FILE)}
+echo GO_URL $GO_URL
 
 # install Go or get it from cache
 GO_CACHE_DIR=$CACHE_DIR/go
