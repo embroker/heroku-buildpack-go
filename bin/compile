@@ -59,6 +59,7 @@ finished() {
 }
 
 GO_PROJECT_NAME=$(read_json "$BUILD_DIR/Godeps/Godeps.json" ".ImportPath")
+echo GO_PROJECT_NAME $GO_PROJECT_NAME
 GO_VERSION=$(read_json "$BUILD_DIR/Godeps/Godeps.json" ".GoVersion")
 echo GO_VERSION $GO_VERSION
 
