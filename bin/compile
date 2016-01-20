@@ -132,7 +132,7 @@ source ./buildserver.sh
 
 # read and resolve Node version
 NODE_VERSION=$(read_json "$BUILD_DIR/client/heroku.json" ".node")
-#echo ".node (heroku.json):  ${NODE_VERSION:-unspecified}"
+echo ".node (heroku.json):  ${NODE_VERSION:-unspecified}"
 
 if nodejs_version_needs_resolution "$NODE_VERSION"; then
 	echo "Resolving node NODE_VERSION ${NODE_VERSION:-(latest stable)} via semver.io..."
