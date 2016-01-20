@@ -39,7 +39,7 @@ urlfor() {
 
 mkdir -p "$1" "$2"
 BUILD_DIR_DIR=$(cd "$1/" && pwd)
-CACHE=$(cd "$2/" && pwd)
+CACHE_DIR=$(cd "$2/" && pwd)
 BP_DIR=$(cd "$(dirname $0)/.." && pwd)
 ARCH=$(uname -m|tr A-Z a-z)
 if test $ARCH = x86_64
