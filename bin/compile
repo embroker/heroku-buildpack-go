@@ -38,24 +38,24 @@ urlfor() {
 }
 
 mkdir -p "$1" "$2"
-build=$(cd "$1/" && pwd)
-cache=$(cd "$2/" && pwd)
-buildpack=$(cd "$(dirname $0)/.." && pwd)
-arch=$(uname -m|tr A-Z a-z)
-if test $arch = x86_64
-then arch=amd64
+BUILD_DIR_DIR=$(cd "$1/" && pwd)
+CACHE=$(cd "$2/" && pwd)
+BP_DIR=$(cd "$(dirname $0)/.." && pwd)
+ARCH=$(uname -m|tr A-Z a-z)
+if test $ARCH = x86_64
+then ARCH=amd64
 fi
-plat=$(uname|tr A-Z a-z)-$arch
+PLAT=$(uname|tr A-Z a-z)-$ARCH
 
 # Python
-venv=$cache/venv
-mkdir -p $cache/pip
-PATH=$buildpack/$plat/bin:$venv/bin:$PATH
+venv=$CACHE_DIR/venv
+mkdir -p $CACHE_DIR/pip
+PATH=$BP_DIR/$PLAT/bin:$venv/bin:$PATH
 steptxt="----->"
 
-source $buildpack/lib/environment.sh
-source $buildpack/lib/binaries.sh
-source $buildpack/lib/json.sh
+source $BP_DIR/lib/environment.sh
+source $BP_DIR/lib/binaries.sh
+source $BP_DIR/lib/json.sh
 
 warn() {
     echo >&2 " !     $@"
@@ -73,75 +73,102 @@ finished() {
     echo "done"
 }
 
-if test -f $build/Godeps/Godeps.json
+if test -f $BUILD_DIR/Godeps/Godeps.json
 then
     step "Checking Godeps/Godeps.json file."
-    if ! jq -r . < $build/Godeps/Godeps.json > /dev/null
+    if ! jq -r . < $BUILD_DIR/Godeps/Godeps.json > /dev/null
     then
         warn "Bad Godeps/Godeps.json file"
         exit 1
     fi
-    name=$(<$build/Godeps/Godeps.json jq -r .ImportPath)
-    ver=$(<$build/Godeps/Godeps.json jq -r .GoVersion)
+    name=$(<$BUILD_DIR/Godeps/Godeps.json jq -r .ImportPath)
+    GO_VERSION=$(<$BUILD_DIR/Godeps/Godeps.json jq -r .GoVersion)
 else
-    warn "Godeps are required. For instructions:"
-    warn "https://devcenter.heroku.com/articles/go-support"
+    warn "Godeps/Godeps.json not found
     exit 1
 fi
 
-file=${GOFILE:-$ver.$(uname|tr A-Z a-z)-amd64$(platext $ver).tar.gz}
-url=${GOURL:-$(urlfor $ver $file)}
-
-if test -e $build/bin && ! test -d $build/bin
+if test -e $BUILD_DIR/bin && ! test -d $BUILD_DIR/bin
 then
     warn "File bin exists and is not a directory."
     exit 1
 fi
 
+GO_FILE=${GOFILE:-$GO_VERSION.$(uname|tr A-Z a-z)-amd64$(platext $GO_VERSION).tar.gz}
+GO_URL=${GOURL:-$(urlfor $GO_VERSION $GO_FILE)}
+
 # install Go or get it from cache
-if test -d $cache/$ver/go
+GO_CACHE_DIR=$CACHE_DIR/go
+GO_DIR=$GO_CACHE_DIR/$GO_VERSION/
+if test -d $GO_DIR
 then
-    step "Using $ver"
+    step "Using $GO_VERSION from cache"
 else
-    rm -rf $cache/* # be sure not to build up cruft
-    mkdir -p $cache/$ver
-    cd $cache/$ver
-    start "Installing $ver"
-        curl -sO $url
-        tar zxf $file
-        rm -f $file
+    rm -rf $GO_CACHE_DIR/* # clear Go cache
+    mkdir -p "$GO_CACHE_DIR"
+    cd $GO_CACHE_DIR
+    start "Installing $GO_VERSION"
+		GO_TAR="go.tar.gz"
+		curl -sO $GO_URL -0 $GO_TAR
+		tar zxf $GO_TAR
+		rm -f $GO_TAR
+		mv go $GO_VERSION
     finished
-    cd - >/dev/null
 fi
 
-mkdir -p $build/bin
-GOBIN=$build/bin export GOBIN
-export GOROOT=$cache/$ver/go
-export GOPATH=$build/.heroku/go
+mkdir -p $BUILD_DIR/bin
+GOBIN=$BUILD_DIR/bin export GOBIN
+export GOROOT=$GO_DIR
+export GOPATH=$BUILD_DIR/.heroku/go
 export PATH=$GOROOT/bin:$GOBIN:$PATH
 
 p=$GOPATH/src/$name
 mkdir -p $p
-cp -R $build/* $p
+cp -R $BUILD_DIR/* $p
 cd $p
 
 # build server
 source ./buildserver.sh
 
-# install node.js and grunt
-node_engine=$(read_json "$build/client/heroku.json" ".node")
-echo ".node (heroku.json):  ${node_engine:-unspecified}"
-mkdir -p "$build/.heroku/node/"
-install_nodejs "$node_engine" "$build/.heroku/node"
-export PATH="$build/.heroku/node/bin":$PATH
-npm install grunt-cli --save-dev -g
+# read and resolve Node version
+NODE_VERSION=$(read_json "$BUILD_DIR/client/heroku.json" ".node")
+echo ".node (heroku.json):  ${NODE_VERSION:-unspecified}"
 
-cd $build
+if nodejs_version_needs_resolution "$NODE_VERSION"; then
+	echo "Resolving node NODE_VERSION ${NODE_VERSION:-(latest stable)} via semver.io..."
+	NODE_VERSION=$(curl --silent --get --retry 5 --retry-max-time 15 --data-urlencode "range=${NODE_VERSION}" https://semver.herokuapp.com/node/resolve)
+fi
+
+NODE_URL="http://s3pository.heroku.com/node/v$NODE_VERSION/node-v$NODE_VERSION-$OS-$CPU.tar.gz"
+
+# install Node or get it from cache
+NODE_CACHE_DIR=$CACHE_DIR/node/
+NODE_DIR=$NODE_CACHE_DIR/$NODE_VERSION/
+if test -d $NODE_CACHE_DIR
+then
+    step "Using $NODE_VERSION from cache"
+else
+    rm -rf $NODE_CACHE_DIR/* # clear Node cache
+    mkdir -p "$NODE_CACHE_DIR"
+    cd $NODE_CACHE_DIR
+    start "Installing $NODE_VERSION"
+		NODE_TAR="node.tar.gz"
+		curl $NODE_URL --silent --fail --retry 5 --retry-max-time 15 -o $NODE_TAR || (echo "Unable to download node $NODE_VERSION; does it exist?" && false)
+		tar xzf $NODE_TAR
+		mv node-v$NODE_VERSION-$OS-$CPU/* $NODE_VERSION
+    finished
+	chmod +x $NODE_DIR/bin/*
+	npm install grunt-cli --save-dev -g
+fi
+
+export PATH="$NODE_DIR/bin":$PATH
+
+cd $BUILD_DIR
 # build client
 ./buildclient heroku
 
-rm -rf $build/.heroku
+rm -rf $BUILD_DIR/.heroku
 
-mkdir -p $build/.profile.d
-echo 'PATH=$PATH:$HOME/bin' > $build/.profile.d/go.sh
-cp $buildpack/vendor/concurrency.sh $build/.profile.d/
+mkdir -p $BUILD_DIR/.profile.d
+echo 'PATH=$PATH:$HOME/bin' > $BUILD_DIR/.profile.d/go.sh
+cp $BP_DIR/vendor/concurrency.sh $BUILD_DIR/.profile.d/

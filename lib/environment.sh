@@ -10,5 +10,5 @@ get_cpu() {
   fi
 }
 
-os=$(get_os)
-cpu=$(get_cpu)
+OS=$(get_os)
+CPU=$(get_cpu)
