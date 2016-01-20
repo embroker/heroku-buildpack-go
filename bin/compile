@@ -76,6 +76,7 @@ else
     cd $GO_CACHE_DIR
     start "Installing $GO_VERSION"
 		GO_TAR="go.tar.gz"
+		echo GO_URL $GO_URL
 		curl -sO $GO_URL -0 $GO_TAR
 		tar zxf $GO_TAR
 		rm -f $GO_TAR
