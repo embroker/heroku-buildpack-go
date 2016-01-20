@@ -37,8 +37,6 @@ urlfor() {
     esac
 }
 
-export PATH=$BP_DIR/linux-amd64/bin:$PATH
-
 mkdir -p "$1" "$2"
 BUILD_DIR=$(cd "$1/" && pwd)
 echo BUILD_DIR $BUILD_DIR
@@ -46,6 +44,8 @@ CACHE_DIR=$(cd "$2/" && pwd)
 echo CACHE_DIR $CACHE_DIR
 BP_DIR=$(cd "$(dirname $0)/.." && pwd)
 echo BP_DIR $BP_DIR
+
+export PATH=$BP_DIR/linux-amd64/bin:$PATH
 
 source $BP_DIR/lib/environment.sh
 source $BP_DIR/lib/binaries.sh
