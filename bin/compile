@@ -91,11 +91,12 @@ else
     finished
 fi
 
-mkdir -p $BUILD_DIR/bin
-GOBIN=$BUILD_DIR/bin export GOBIN
+export GOBIN=$BUILD_DIR/bin
 export GOROOT=$GO_DIR
 export GOPATH=$BUILD_DIR/.heroku/go
 export PATH=$GOROOT/bin:$GOBIN:$PATH
+
+mkdir -p $GOBIN
 
 p=$GOPATH/src/$GO_PROJECT_NAME
 mkdir -p $p
