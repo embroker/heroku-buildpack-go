@@ -104,7 +104,18 @@ cp -R $BUILD_DIR/* $p
 cd $p
 
 # build server
-source ./buildserver.sh
+# source ./buildserver.sh
+
+$PKGS=$(<$BUILD_DIR /Godeps/Godeps.json $JQ -r 'if .Packages then .Packages | join(" ") else "." end')
+
+cd tools/apigen
+go install $PKGS
+cd -
+cd tools/dmgen
+go install $PKGS
+cd -
+go generate
+go install $PKGS
 
 # read and resolve Node version
 NODE_VERSION=$(read_json "$BUILD_DIR/client/heroku.json" ".node")
