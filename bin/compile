@@ -101,10 +101,10 @@ export PATH=$GOROOT/bin:$GOBIN:$PATH
 
 mkdir -p $GOBIN
 
-p=$GOPATH/src/$GO_PROJECT_NAME
+GO_BUILD_DIR=$GOPATH/src/$GO_PROJECT_NAME/..
 mkdir -p $p
-cp -R $BUILD_DIR/* $p
-cd "$p"
+cp -R $BUILD_DIR/* $GO_BUILD_DIR
+cd "$GO_BUILD_DIR"
 
 # build server
 source ./build.sh
