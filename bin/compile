@@ -106,7 +106,7 @@ echo GO_BUILD_DIR $GO_BUILD_DIR
 mkdir -p $GO_BUILD_DIR
 cp -R $BUILD_DIR/* $GO_BUILD_DIR
 cd $GO_BUILD_DIR
-ll
+ls
 
 # build server
 source ./build.sh
