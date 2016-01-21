@@ -35,7 +35,7 @@ save_cache_directories() {
     if [ -e "$build_dir/$cachepath" ]; then
       echo "- $cachepath"
       mkdir -p "$cache_dir/cache/$cachepath"
-      mv "$build_dir/$cachepath" $(dirname "$cache_dir/cache/$cachepath")
+      cp -a "$build_dir/$cachepath" $(dirname "$cache_dir/cache/$cachepath")
     else
       echo "- $cachepath (nothing to cache)"
     fi
