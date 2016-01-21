@@ -105,8 +105,7 @@ GO_BUILD_DIR=$GOPATH/src/$GO_PROJECT_NAME/..
 echo GO_BUILD_DIR $GO_BUILD_DIR
 mkdir -p $GO_BUILD_DIR
 cp -R $BUILD_DIR/* $GO_BUILD_DIR
-cd $GO_BUILD_DIR
-ls
+cd $GO_BUILD_DIR/server
 
 # build server
 source ./build.sh
