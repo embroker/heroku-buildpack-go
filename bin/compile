@@ -51,8 +51,9 @@ export PATH=$BP_DIR/linux-amd64/bin:$PATH
 
 source $BP_DIR/lib/logging.sh
 source $BP_DIR/lib/environment.sh
-source $BP_DIR/lib/binaries.sh
 source $BP_DIR/lib/json.sh
+source $BP_DIR/lib/binaries.sh
+source $BP_DIR/lib/cache.sh
 
 if [ -f "$ENV_DIR/BP_CLEAR_CACHE" ]; then	
 	step "Clearing cache"
