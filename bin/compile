@@ -63,9 +63,9 @@ CACHE_DIRS=$(get_cache_directories)
 echo "Loading $(echo $CACHE_DIRS | wc -w | xargs) from cacheDirectories (package.json):"
 restore_cache_directories "$BUILD_DIR" "$CACHE_DIR" $CACHE_DIRS
 
-GO_PROJECT_NAME=$(read_json "$BUILD_DIR/Godeps/Godeps.json" ".ImportPath")
+GO_PROJECT_NAME=$(read_json "$BUILD_DIR/server/Godeps/Godeps.json" ".ImportPath")
 echo GO_PROJECT_NAME $GO_PROJECT_NAME
-GO_VERSION=$(read_json "$BUILD_DIR/Godeps/Godeps.json" ".GoVersion")
+GO_VERSION=$(read_json "$BUILD_DIR/server/Godeps/Godeps.json" ".GoVersion")
 echo GO_VERSION $GO_VERSION
 
 GO_FILE=${GOFILE:-$GO_VERSION.$(uname|tr A-Z a-z)-amd64$(platext $GO_VERSION).tar.gz}
@@ -103,10 +103,10 @@ mkdir -p $GOBIN
 p=$GOPATH/src/$GO_PROJECT_NAME
 mkdir -p $p
 cp -R $BUILD_DIR/* $p
-cd $p
+cd "$p"
 
 # build server
-source ./buildserver.sh
+source ./build.sh
 
 # read and resolve Node version
 NODE_VERSION=$(read_json "$BUILD_DIR/heroku.json" ".node")
@@ -141,12 +141,11 @@ else
 	npm install grunt-cli --save-dev -g
 fi
 
-cd $BUILD_DIR
+cd $BUILD_DIR/client
 # build client
-./buildclient heroku
+./build heroku
 
 rm -rf $BUILD_DIR/.heroku
-
 
 echo "Saving $(echo $CACHE_DIRS | wc -w | xargs) cacheDirectories (package.json):"
 save_cache_directories "$BUILD_DIR" "$CACHE_DIR" $CACHE_DIRS
