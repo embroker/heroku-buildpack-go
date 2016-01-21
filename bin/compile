@@ -38,12 +38,14 @@ urlfor() {
 }
 
 mkdir -p "$1" "$2"
-BUILD_DIR=$(cd "$1/" && pwd)
+BUILD_DIR=$1
 echo BUILD_DIR $BUILD_DIR
-CACHE_DIR=$(cd "$2/" && pwd)
+CACHE_DIR=$2
 echo CACHE_DIR $CACHE_DIR
 BP_DIR=$(cd "$(dirname $0)/.." && pwd)
 echo BP_DIR $BP_DIR
+ENV_DIR=$3
+echo ENV_DIR $ENV_DIR
 
 export PATH=$BP_DIR/linux-amd64/bin:$PATH
 
@@ -63,7 +65,7 @@ finished() {
     echo "done"
 }
 
-if ! [ -z ${BP_CLEAR_CACHE+x} ]; then
+if [ -f "$ENV_DIR/BP_CLEAR_CACHE" ]; then
 	step "Clearing cache"
 	rm -rf $CACHE_DIR/*
 fi
@@ -81,7 +83,7 @@ echo GO_URL $GO_URL
 # install Go or get it from cache
 GO_CACHE_DIR=$CACHE_DIR/go
 GO_DIR=$GO_CACHE_DIR/$GO_VERSION/
-if test -d $GO_DIR
+if test -d "$GO_DIR"
 then
     step "Using $GO_VERSION from cache"
 else
@@ -130,7 +132,7 @@ NODE_DIR=$NODE_CACHE_DIR/$NODE_VERSION/
 export PATH="$NODE_DIR/bin":$PATH
 if test -d $NODE_CACHE_DIR
 then
-    step "Using $NODE_VERSION from cache"
+    step "Using Node $NODE_VERSION from cache"
 else
     rm -rf $NODE_CACHE_DIR/* # clear Node cache
     mkdir -p "$NODE_CACHE_DIR"
