@@ -155,3 +155,5 @@ save_cache_directories "$BUILD_DIR" "$CACHE_DIR" $CACHE_DIRS
 mkdir -p $BUILD_DIR/.profile.d
 echo 'PATH=$PATH:$HOME/bin' > $BUILD_DIR/.profile.d/go.sh
 cp $BP_DIR/vendor/concurrency.sh $BUILD_DIR/.profile.d/
+
+echo SECONDS $SECONDS
