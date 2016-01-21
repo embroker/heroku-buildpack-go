@@ -49,26 +49,19 @@ echo ENV_DIR $ENV_DIR
 
 export PATH=$BP_DIR/linux-amd64/bin:$PATH
 
+source $BP_DIR/lib/logging.sh
 source $BP_DIR/lib/environment.sh
 source $BP_DIR/lib/binaries.sh
 source $BP_DIR/lib/json.sh
 
-step() {
-    echo "-----> $@"
-}
-
-start() {
-    echo -n "-----> $@... "
-}
-
-finished() {
-    echo "done"
-}
-
-if [ -f "$ENV_DIR/BP_CLEAR_CACHE" ]; then
+if [ -f "$ENV_DIR/BP_CLEAR_CACHE" ]; then	
 	step "Clearing cache"
 	rm -rf $CACHE_DIR/*
 fi
+
+CACHE_DIRS=$(get_cache_directories)
+echo "Loading $(echo $CACHE_DIRS | wc -w | xargs) from cacheDirectories (package.json):"
+restore_cache_directories "$BUILD_DIR" "$CACHE_DIR" $CACHE_DIRS
 
 GO_PROJECT_NAME=$(read_json "$BUILD_DIR/Godeps/Godeps.json" ".ImportPath")
 echo GO_PROJECT_NAME $GO_PROJECT_NAME
@@ -116,7 +109,7 @@ cd $p
 source ./buildserver.sh
 
 # read and resolve Node version
-NODE_VERSION=$(read_json "$BUILD_DIR/client/heroku.json" ".node")
+NODE_VERSION=$(read_json "$BUILD_DIR/heroku.json" ".node")
 echo ".node (heroku.json):  ${NODE_VERSION:-unspecified}"
 
 if nodejs_version_needs_resolution "$NODE_VERSION"; then
@@ -153,6 +146,10 @@ cd $BUILD_DIR
 ./buildclient heroku
 
 rm -rf $BUILD_DIR/.heroku
+
+
+echo "Saving $(echo $CACHE_DIRS | wc -w | xargs) cacheDirectories (package.json):"
+save_cache_directories "$BUILD_DIR" "$CACHE_DIR" $CACHE_DIRS
 
 mkdir -p $BUILD_DIR/.profile.d
 echo 'PATH=$PATH:$HOME/bin' > $BUILD_DIR/.profile.d/go.sh
