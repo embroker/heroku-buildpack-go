@@ -1,5 +1,5 @@
 get_cache_directories() {
-  echo $(read_json "$BUILD_DIR/package.json" ".cache_directories | .[]?")
+  echo $(read_json "$BUILD_DIR/heroku.json" ".client_cache_directories | .[]?")
 }
 
 restore_cache_directories() {
