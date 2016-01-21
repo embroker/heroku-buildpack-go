@@ -104,7 +104,8 @@ mkdir -p $GOBIN
 GO_BUILD_DIR=$GOPATH/src/$GO_PROJECT_NAME/..
 echo GO_BUILD_DIR $GO_BUILD_DIR
 mkdir -p $GO_BUILD_DIR
-cp -R $BUILD_DIR/* $GO_BUILD_DIR
+cp -R $BUILD_DIR/server $GO_BUILD_DIR/server
+cp $BUILD_DIR/api_spec.json $GO_BUILD_DIR/api_spec.json
 cd $GO_BUILD_DIR/server
 
 # build server
