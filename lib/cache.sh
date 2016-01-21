@@ -1,5 +1,11 @@
 get_cache_directories() {
-  echo $(read_json "$BUILD_DIR/heroku.json" ".client_cache_directories | .[]?")
+  paths=$(read_json "$BUILD_DIR/heroku.json" ".client_cache_directories | .[]?")
+  local result
+  for path in $paths
+  do
+    result+="client/$path "
+  done
+  echo $result
 }
 
 restore_cache_directories() {
