@@ -59,10 +59,12 @@ if [ -f "$ENV_DIR/BP_CLEAR_CACHE" ]; then
 	step "Clearing cache"
 	rm -rf $CACHE_DIR/*
 fi
+echo SECONDS $SECONDS
 
 CACHE_DIRS=$(get_cache_directories)
 echo "Loading $(echo $CACHE_DIRS | wc -w | xargs) from client_cache_Directories (heroku.json):"
 restore_cache_directories "$BUILD_DIR" "$CACHE_DIR" $CACHE_DIRS
+echo SECONDS $SECONDS
 
 GO_PROJECT_NAME=$(read_json "$BUILD_DIR/server/Godeps/Godeps.json" ".ImportPath")
 echo GO_PROJECT_NAME $GO_PROJECT_NAME
@@ -93,6 +95,7 @@ else
 		mv go $GO_VERSION
     finished
 fi
+echo SECONDS $SECONDS
 
 export GOBIN=$BUILD_DIR/bin
 export GOROOT=$GO_DIR
@@ -102,13 +105,17 @@ export PATH=$GOROOT/bin:$GOBIN:$PATH
 mkdir -p $GOBIN
 
 GO_BUILD_DIR=$GOPATH/src/$GO_PROJECT_NAME/..
+echo "Copying go source files to $GO_BUILD_DIR"
 echo GO_BUILD_DIR $GO_BUILD_DIR
 mkdir -p $GO_BUILD_DIR
 cp -R $BUILD_DIR/server $BUILD_DIR/api_spec.json $GO_BUILD_DIR
 cd $GO_BUILD_DIR/server
+echo SECONDS $SECONDS
 
 # build server
+echo "Building server"
 source ./build.sh
+echo SECONDS $SECONDS
 
 # read and resolve Node version
 NODE_VERSION=$(read_json "$BUILD_DIR/heroku.json" ".node")
@@ -142,15 +149,19 @@ else
 	chmod +x $NODE_DIR/bin/*
 	npm install grunt-cli --save-dev -g
 fi
+echo SECONDS $SECONDS
 
 cd $BUILD_DIR/client
 # build client
+echo "Building client"
 ./build heroku
+echo SECONDS $SECONDS
 
 rm -rf $BUILD_DIR/.heroku
 
 echo "Saving $(echo $CACHE_DIRS | wc -w | xargs) client_cache_Directories (heroku.json):"
 save_cache_directories "$BUILD_DIR" "$CACHE_DIR" $CACHE_DIRS
+echo SECONDS $SECONDS
 
 mkdir -p $BUILD_DIR/.profile.d
 echo 'PATH=$PATH:$HOME/bin' > $BUILD_DIR/.profile.d/go.sh
