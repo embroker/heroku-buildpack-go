@@ -12,29 +12,13 @@ unset GIT_DIR
 # This doesn't affect Heroku builds, it's only
 # for testing on Darwin systems.
 platext() {
-    case $1 in
-    go1.0*|go1.1beta*|go1.1rc*|go1.1|go1.1.*) return ;;
-    esac
     case $(uname|tr A-Z a-z) in
     darwin) printf %s -osx10.8 ;;
     esac
 }
 
-# Go releases have moved to a new URL scheme
-# starting with Go version 1.2.2. Return the old
-# location for known old versions and the new
-# location otherwise.
 urlfor() {
-    ver=$1
-    file=$2
-    case $ver in
-    go1.0*|go1.1beta*|go1.1rc*|go1.1|go1.1.*|go1.2beta*|go1.2rc*|go1.2|go1.2.1)
-        echo http://go.googlecode.com/files/$file
-        ;;
-    *)
-        echo https://storage.googleapis.com/golang/$file
-        ;;
-    esac
+    echo https://storage.googleapis.com/golang/$1
 }
 
 mkdir -p "$1" "$2"
@@ -53,17 +37,11 @@ source $BP_DIR/lib/logging.sh
 source $BP_DIR/lib/environment.sh
 source $BP_DIR/lib/json.sh
 source $BP_DIR/lib/binaries.sh
-source $BP_DIR/lib/cache.sh
 
 if [ -f "$ENV_DIR/BP_CLEAR_CACHE" ]; then	
 	step "Clearing cache"
 	rm -rf $CACHE_DIR/*
 fi
-echo SECONDS $SECONDS
-
-CACHE_DIRS=$(get_cache_directories)
-echo "Loading $(echo $CACHE_DIRS | wc -w | xargs) from client_cache_Directories (heroku.json):"
-restore_cache_directories "$BUILD_DIR" "$CACHE_DIR" $CACHE_DIRS
 echo SECONDS $SECONDS
 
 GO_PROJECT_NAME=$(read_json "$BUILD_DIR/server/Godeps/Godeps.json" ".ImportPath")
@@ -73,7 +51,7 @@ echo GO_VERSION $GO_VERSION
 
 GO_FILE=${GOFILE:-$GO_VERSION.$(uname|tr A-Z a-z)-amd64$(platext $GO_VERSION).tar.gz}
 echo GO_FILE $GO_FILE
-GO_URL=${GOURL:-$(urlfor $GO_VERSION $GO_FILE)}
+GO_URL=${GOURL:-$(urlfor $GO_FILE)}
 echo GO_URL $GO_URL
 
 # install Go or get it from cache
@@ -114,7 +92,7 @@ echo SECONDS $SECONDS
 
 # build server
 echo "Building server"
-source ./build.sh
+godep install
 echo SECONDS $SECONDS
 
 # read and resolve Node version
@@ -151,17 +129,7 @@ else
 fi
 echo SECONDS $SECONDS
 
-cd $BUILD_DIR/client
-# build client
-echo "Building client"
-./build heroku
-echo SECONDS $SECONDS
-
 rm -rf $BUILD_DIR/.heroku
-
-echo "Saving $(echo $CACHE_DIRS | wc -w | xargs) client_cache_Directories (heroku.json):"
-save_cache_directories "$BUILD_DIR" "$CACHE_DIR" $CACHE_DIRS
-echo SECONDS $SECONDS
 
 mkdir -p $BUILD_DIR/.profile.d
 echo 'PATH=$PATH:$HOME/bin' > $BUILD_DIR/.profile.d/go.sh
