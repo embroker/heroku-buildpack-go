@@ -34,9 +34,7 @@ echo ENV_DIR $ENV_DIR
 export PATH=$BP_DIR/linux-amd64/bin:$PATH
 
 source $BP_DIR/lib/logging.sh
-source $BP_DIR/lib/environment.sh
 source $BP_DIR/lib/json.sh
-source $BP_DIR/lib/binaries.sh
 
 if [ -f "$ENV_DIR/BP_CLEAR_CACHE" ]; then	
 	step "Clearing cache"
@@ -92,7 +90,7 @@ echo SECONDS $SECONDS
 
 # build server
 echo "Building server"
-godep install
+godep go install
 echo SECONDS $SECONDS
 
 rm -rf $BUILD_DIR/.heroku
