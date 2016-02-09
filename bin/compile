@@ -21,8 +21,6 @@ urlfor() {
     echo https://storage.googleapis.com/golang/$1
 }
 
-git rev-parse HEAD
-
 mkdir -p "$1" "$2"
 BUILD_DIR=$1
 echo BUILD_DIR $BUILD_DIR
@@ -32,6 +30,11 @@ BP_DIR=$(cd "$(dirname $0)/.." && pwd)
 echo BP_DIR $BP_DIR
 ENV_DIR=$3
 echo ENV_DIR $ENV_DIR
+
+cd $BUILD_DIR
+git branch
+git rev-parse HEAD
+cd -
 
 export PATH=$BP_DIR/linux-amd64/bin:$PATH
 
