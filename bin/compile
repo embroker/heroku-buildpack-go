@@ -31,11 +31,6 @@ echo BP_DIR $BP_DIR
 ENV_DIR=$3
 echo ENV_DIR $ENV_DIR
 
-cd $BUILD_DIR
-git branch
-git rev-parse HEAD
-cd -
-
 export PATH=$BP_DIR/linux-amd64/bin:$PATH
 
 source $BP_DIR/lib/logging.sh
@@ -45,6 +40,11 @@ if [ -f "$ENV_DIR/BP_CLEAR_CACHE" ]; then
 	step "Clearing cache"
 	rm -rf $CACHE_DIR/*
 fi
+
+if [ -f "$ENV/SOURCE_VERSION" ]; then
+	cat "$ENV/SOURCE_VERSION"
+fi
+
 echo SECONDS $SECONDS
 
 GO_PROJECT_NAME=$(read_json "$BUILD_DIR/server/Godeps/Godeps.json" ".ImportPath")
