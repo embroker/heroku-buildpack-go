@@ -45,6 +45,8 @@ if [ -f "$ENV/SOURCE_VERSION" ]; then
 	cat "$ENV/SOURCE_VERSION"
 fi
 
+echo SOURCE_VERSION $SOURCE_VERSION
+
 echo SECONDS $SECONDS
 
 GO_PROJECT_NAME=$(read_json "$BUILD_DIR/server/Godeps/Godeps.json" ".ImportPath")
