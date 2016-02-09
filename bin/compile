@@ -21,6 +21,8 @@ urlfor() {
     echo https://storage.googleapis.com/golang/$1
 }
 
+git branch
+
 mkdir -p "$1" "$2"
 BUILD_DIR=$1
 echo BUILD_DIR $BUILD_DIR
